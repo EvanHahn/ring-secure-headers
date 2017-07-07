@@ -21,6 +21,17 @@ This middleware lets you disable browsers’ DNS prefetching by setting the `X-D
 (dns-prefetch-control my-handler {:allow? true})
 ```
 
+### Don't Sniff Mimetype
+
+This middleware helps prevent browsers from trying to guess ("sniff") the MIME type, which can have security implications. It does this by setting the `X-Content-Type-Options` header to `nosniff`. See the [Helmet docs](https://helmetjs.github.io/docs/dont-sniff-mimetype/) for further explanation.
+
+```clojure
+(require '[ring-secure-headers.core :refer [nosniff]])
+
+; Sets X-Content-Type-Options: nosniff
+(nosniff my-handler)
+```
+
 ### Expect-CT
 
 The `Expect-CT` HTTP header tells browsers to expect Certificate Transparency. For more about Certificate Transparency and this header, see [this blog post](https://scotthelme.co.uk/a-new-security-header-expect-ct/) and the [in-progress spec](https://datatracker.ietf.org/doc/draft-stark-expect-ct).
@@ -90,6 +101,8 @@ The `Public-Key-Pins` header helps keep your users on secure HTTPS. For more, se
                   :report-uri "https://example.com/report"
                   :report-only? true})
 ```
+
+
 
 ## License
 

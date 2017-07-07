@@ -68,3 +68,7 @@
 
     (fn [request]
       (assoc-in (handler request) [:headers header] result))))
+
+(defn nosniff [handler]
+  (fn [request]
+    (assoc-in (handler request) [:headers "x-content-type-options"] "nosniff")))
