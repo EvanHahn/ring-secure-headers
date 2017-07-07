@@ -63,6 +63,34 @@ Frameguard mitigates clickjacking attacks by setting the `X-Frame-Options` heade
                         :domain "https://example.com"})
 ```
 
+### HPKP
+
+The `Public-Key-Pins` header helps keep your users on secure HTTPS. For more, see the [Helmet docs](https://helmetjs.github.io/docs/hpkp/).
+
+```clojure
+(require '[ring-secure-headers.core :refer [hpkp]])
+
+; Sets Public-Key-Pins: pin-sha256="AbCdEf123="; pin-sha256="ZyXwVu456="; max-age: 123
+(hpkp my-handler {:max-age 123
+                  :sha256s ["AbCdEf123=", "ZyXwVu456="]})
+
+; Sets Public-Key-Pins: pin-sha256=...; includeSubDomains
+(hpkp my-handler {:max-age 123
+                  :sha256s ["AbCdEf123=", "ZyXwVu456="]
+                  :include-subdomains? true})
+
+; Sets Public-Key-Pins: pin-sha256=...; report-uri="https://example.com/report"
+(hpkp my-handler {:max-age nintey-days-in-seconds
+                  :sha256s ["AbCdEf123=", "ZyXwVu456="]
+                  :report-uri "https://example.com/report"})
+
+; Sets Public-Key-Pins-Report-Only: pin-sha256=...; report-uri="https://example.com/report"
+(hpkp my-handler {:max-age nintey-days-in-seconds
+                  :sha256s ["AbCdEf123=", "ZyXwVu456="]
+                  :report-uri "https://example.com/report"
+                  :report-only? true})
+```
+
 ## License
 
 Copyright © 2017 Evan Hahn
