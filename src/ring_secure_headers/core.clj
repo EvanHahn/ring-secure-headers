@@ -1,13 +1,6 @@
 (ns ring-secure-headers.core
-  (:require [clojure.string :refer [join]]))
-
-(defn- wrap [f]
-  (fn
-    ([handler] (f handler {}))
-    ([handler options]
-     (when-not (map? options)
-       (throw (ex-info "options must be a map" {:options options})))
-     (f handler options))))
+  (:require [clojure.string :refer [join]]
+            [ring-secure-headers.internal-util :refer [wrap conj-report-uri]]))
 
 (def dns-prefetch-control
   (wrap (fn dns-prefetch-control [handler options]
@@ -24,14 +17,7 @@
                           raw-max-age
                           (throw (ex-info "max-age must be 0 or greater" {:max-age raw-max-age}))) with-max-age (conj with-enforce (str "max-age=" max-age))
 
-                report-uri (:report-uri options)
-                with-report-uri (cond
-                                  (string? report-uri)
-                                  (conj with-max-age (str "report-uri=\"" report-uri "\""))
-                                  (contains? options :report-uri)
-                                  (throw (ex-info "report-uri must be a string" {:report-uri report-uri}))
-                                  :default
-                                  with-max-age)
+                with-report-uri (conj-report-uri with-max-age options)
 
                 result (join "; " with-report-uri)]
 
@@ -70,20 +56,14 @@
                                   (conj with-max-age-and-shas "includeSubDomains")
                                   with-max-age-and-shas)
 
-        raw-report-uri (:report-uri options)
-        with-report-uri (cond
-                          (string? raw-report-uri)
-                          (conj with-include-subdomains (str "report-uri=\"" raw-report-uri "\""))
-                          (contains? options :report-uri)
-                          (throw (ex-info "report-uri must be a string if defined" {:report-uri raw-report-uri}))
-                          :else with-include-subdomains)
+        with-report-uri (conj-report-uri with-include-subdomains options)
 
         report-only? (:report-only? options)
         header (if report-only? "public-key-pins-report-only" "public-key-pins")
 
         result (join "; " with-report-uri)]
 
-    (when (and report-only? (not raw-report-uri))
+    (when (and report-only? (not (:report-uri options)))
       (throw (ex-info "report-uri must be defined in report-only mode" {})))
 
     (fn [request]
