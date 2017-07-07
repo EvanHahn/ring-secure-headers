@@ -1,6 +1,6 @@
 (ns ring-secure-headers.core
   (:require [clojure.string :refer [join]]
-            [ring-secure-headers.internal-util :refer [wrap constantly-set-header conj-report-uri]]))
+            [ring-secure-headers.internal-util :refer [wrap constantly-set-header conj-report-uri old-ie?]]))
 
 (def dns-prefetch-control
   (wrap (fn dns-prefetch-control [handler options]
@@ -66,3 +66,12 @@
 
 (defn ie-no-open [handler]
   (constantly-set-header handler "x-download-options" "noopen"))
+
+(def xss-filter
+  (wrap (fn xss-filter [handler options]
+          (if (:force-on-old-ie? options)
+            (constantly-set-header handler "x-xss-protection" "1; mode=block")
+            (fn [request]
+              (let [useragent (get-in request [:headers "user-agent"])
+                    header-value (if (old-ie? useragent) "0" "1; mode=block")]
+                (assoc-in (handler request) [:headers "x-xss-protection"] header-value)))))))

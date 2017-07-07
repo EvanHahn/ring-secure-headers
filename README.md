@@ -113,6 +113,20 @@ This middleware sets the `X-Download-Options` to prevent Internet Explorer from 
 (ie-no-open my-handler)
 ```
 
+### XSS Filter
+
+The `xss-filter` middleware sets the `X-XSS-Protection` header to prevent reflected XSS attacks. See [the Helmet docs](https://helmetjs.github.io/docs/xss-filter/) for a more detailed description.
+
+```clojure
+(require '[ring-secure-headers.core :refer [xss-filter]])
+
+; Sets X-XSS-Protection: 1; mode=block
+(xss-filter my-handler)
+
+; Force the header to be set on old versions of Internet Explorer, which can have other security risks
+(xss-filter my-handler {:force-on-old-ie? true})
+```
+
 ## License
 
 Copyright © 2017 Evan Hahn

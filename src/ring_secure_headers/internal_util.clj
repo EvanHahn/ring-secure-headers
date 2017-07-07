@@ -21,3 +21,10 @@
       (throw (ex-info "report-uri must be a string" {:report-uri report-uri}))
       :default
       coll)))
+
+(defn old-ie? [ua]
+  (if (string? ua)
+    (if-let [version-match (second (re-find #"(?i)msie\s*(\d+)" ua))]
+      (< (Integer. version-match) 9)
+      false)
+    false))
