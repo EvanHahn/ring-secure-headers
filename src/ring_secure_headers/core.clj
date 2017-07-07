@@ -13,7 +13,7 @@
   (wrap (fn dns-prefetch-control [handler options]
           (let [result (if (:allow? options) "on" "off")]
             (fn [request]
-              (handler (assoc-in request [:headers "x-dns-prefetch-control"] result)))))))
+              (assoc-in (handler request) [:headers "x-dns-prefetch-control"] result))))))
 
 (def expect-ct
   (wrap (fn expect-ct [handler options]
@@ -36,7 +36,7 @@
                 result (join "; " with-report-uri)]
 
             (fn [request]
-              (handler (assoc-in request [:headers "expect-ct"] result)))))))
+              (assoc-in (handler request) [:headers "expect-ct"] result))))))
 
 (def frameguard
   (wrap (fn frameguard [handler options]
@@ -50,4 +50,6 @@
                                        (throw (ex-info "ALLOW-FROM requires a non-empty domain string" {:domain domain})))
                          (throw (ex-info "Action must be :deny, :same-origin, or :allow-from" {:action action})))]
             (fn [request]
-              (handler (assoc-in request [:headers "x-frame-options"] result)))))))
+              (assoc-in (handler request) [:headers "x-frame-options"] result))))))
+
+(def hpkp (constantly {}))
