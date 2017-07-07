@@ -102,7 +102,16 @@ The `Public-Key-Pins` header helps keep your users on secure HTTPS. For more, se
                   :report-only? true})
 ```
 
+### IE No Open
 
+This middleware sets the `X-Download-Options` to prevent Internet Explorer from executing downloads in your site’s context. See [the Helmet docs](https://helmetjs.github.io/docs/ienoopen/) for more.
+
+```clojure
+(require '[ring-secure-headers.core :refer [ie-no-open]])
+
+; Sets X-Download-Options: noopen
+(ie-no-open my-handler)
+```
 
 ## License
 

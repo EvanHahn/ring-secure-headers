@@ -63,3 +63,6 @@
 
 (defn nosniff [handler]
   (constantly-set-header handler "x-content-type-options" "nosniff"))
+
+(defn ie-no-open [handler]
+  (constantly-set-header handler "x-download-options" "noopen"))
