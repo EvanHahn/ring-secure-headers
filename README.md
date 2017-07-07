@@ -41,6 +41,28 @@ The `Expect-CT` HTTP header tells browsers to expect Certificate Transparency. F
                        :report-uri "https://example.com/report"})
 ```
 
+### Frameguard
+
+Frameguard mitigates clickjacking attacks by setting the `X-Frame-Options` header. See the [Helmet docs](https://helmetjs.github.io/docs/frameguard/) for more.
+
+```clojure
+(require '[ring-secure-headers.core :refer [frameguard]])
+
+; Don't allow me to be in ANY frames.
+; Sets X-Frame-Options: DENY
+(frameguard my-handler {:action :deny})
+
+; Only let me be framed by people of the same origin.
+; Sets X-Frame-Options: SAMEORIGIN
+(frameguard my-handler {:action :same-origin})
+(frameguard my-handler)  ; defaults to :same-origin
+
+; Allow from a specific host.
+; Sets X-Frame-Options: ALLOW-FROM https://example.com
+(frameguard my-handler {:action :allow-from
+                        :domain "https://example.com"})
+```
+
 ## License
 
 Copyright © 2017 Evan Hahn

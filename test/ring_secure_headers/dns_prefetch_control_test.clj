@@ -17,5 +17,5 @@
 
 (deftest dns-prefetch-control-sad-path-test
   (testing "throws when not passed a map"
-    (is (thrown? Exception (dns-prefetch-control dummy-handler 123)))
-    (is (thrown? Exception (dns-prefetch-control dummy-handler [:max-age 123])))))
+    (is (thrown? Exception (dns-prefetch-control dummy-handler true)))
+    (is (thrown? Exception (dns-prefetch-control dummy-handler [:allow? true])))))
