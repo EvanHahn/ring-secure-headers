@@ -131,4 +131,4 @@ The `xss-filter` middleware sets the `X-XSS-Protection` header to prevent reflec
 
 Copyright © 2017 Evan Hahn
 
-Distributed under the Unlicense either version 1.0 and later.
+Distributed under the Unlicense either version 0.1.0 and later.

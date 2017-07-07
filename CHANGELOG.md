@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
 ## [Unreleased]
+
+## 0.1.0
 ### Added
 - Add `dns-prefetch-control` middleware
 - Add `expect-ct` middleware
@@ -11,4 +13,4 @@ All notable changes to this project will be documented in this file. This change
 - Add `ie-no-open` middleware
 - Add `xss-filter` middleware
 
-[Unreleased]: https://github.com/EvanHahn/ring-secure-headers/compare/0.1.1...HEAD
+[Unreleased]: https://github.com/EvanHahn/ring-secure-headers/compare/0.1.0...HEAD

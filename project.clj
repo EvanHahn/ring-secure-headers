@@ -1,4 +1,4 @@
-(defproject ring-secure-headers "0.1.0-SNAPSHOT"
+(defproject ring-secure-headers "0.1.0"
   :description "Ring HTTP headers for security"
   :url "https://github.com/EvanHahn/ring-secure-headers"
   :license {:name "Unlicense"
