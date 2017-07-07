@@ -52,4 +52,39 @@
             (fn [request]
               (assoc-in (handler request) [:headers "x-frame-options"] result))))))
 
-(def hpkp (constantly {}))
+(defn hpkp [handler options]
+  (let [raw-shas (:sha256s options)
+        shas (if (and (> (count raw-shas) 1) (every? string? raw-shas))
+               raw-shas
+               (throw (ex-info "sha256s must be a collection of strings" {:sha256s raw-shas})))
+
+        raw-max-age (:max-age options)
+        max-age (if (and (integer? raw-max-age) (> raw-max-age 0))
+                  raw-max-age
+                  (throw (ex-info "max-age must be a positive integer" {:max-age raw-max-age})))
+
+        with-max-age-and-shas (conj (into [] (map #(str "pin-sha256=\"" % \") shas))
+                                    (str "max-age=" max-age))
+
+        with-include-subdomains (if (:include-subdomains? options)
+                                  (conj with-max-age-and-shas "includeSubDomains")
+                                  with-max-age-and-shas)
+
+        raw-report-uri (:report-uri options)
+        with-report-uri (cond
+                          (string? raw-report-uri)
+                          (conj with-include-subdomains (str "report-uri=\"" raw-report-uri "\""))
+                          (contains? options :report-uri)
+                          (throw (ex-info "report-uri must be a string if defined" {:report-uri raw-report-uri}))
+                          :else with-include-subdomains)
+
+        report-only? (:report-only? options)
+        header (if report-only? "public-key-pins-report-only" "public-key-pins")
+
+        result (join "; " with-report-uri)]
+
+    (when (and report-only? (not raw-report-uri))
+      (throw (ex-info "report-uri must be defined in report-only mode" {})))
+
+    (fn [request]
+      (assoc-in (handler request) [:headers header] result))))
