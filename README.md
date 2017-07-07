@@ -26,7 +26,6 @@ This middleware lets you disable browsers’ DNS prefetching by setting the `X-D
 The `Expect-CT` HTTP header tells browsers to expect Certificate Transparency. For more about Certificate Transparency and this header, see [this blog post](https://scotthelme.co.uk/a-new-security-header-expect-ct/) and the [in-progress spec](https://datatracker.ietf.org/doc/draft-stark-expect-ct).
 
 ```clojure
-(require '[ring-secure-headers.core :as security-headers])
 (require '[ring-secure-headers.core :refer [expect-ct]])
 
 ; Sets Expect-CT: max-age=123
