@@ -1,12 +1,22 @@
 (ns ring-secure-headers.core
   (:require [clojure.string :refer [join]]))
 
+(defn- assert-options-map [v]
+  (when-not (map? v)
+    (throw (ex-info "options must be a map" {:options v}))))
+
+(defn dns-prefetch-control
+  ([handler] (dns-prefetch-control handler {}))
+  ([handler options]
+   (assert-options-map options)
+   (let [result (if (:allow? options) "on" "off")]
+     (fn [request]
+       (handler (assoc-in request [:headers "x-dns-prefetch-control"] result))))))
+
 (defn expect-ct
   ([handler] (expect-ct handler {}))
-
   ([handler options]
-   (when-not (map? options)
-     (throw (ex-info "options must be a map" {:options options})))
+   (assert-options-map options)
 
    (let [with-enforce (if (:enforce? options) ["enforce"] [])
 

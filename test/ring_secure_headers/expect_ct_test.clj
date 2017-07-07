@@ -1,39 +1,30 @@
 (ns ring-secure-headers.expect-ct-test
   (:require [clojure.test :refer :all]
+            [ring-secure-headers.test-helpers :refer [dummy-handler make-test-helper]]
             [ring-secure-headers.core :refer [expect-ct]]))
 
-(defn- dummy-handler [_])
-
-(defn- expect-handler [expected]
-  (fn [request]
-    (let [actual (get-in request [:headers "expect-ct"])]
-      (is (= expected actual)))))
-
-(defn- test-helper [options expected]
-  (let [handler (expect-ct (expect-handler expected) options)]
-    (handler {})))
+(def test-helper (make-test-helper expect-ct "expect-ct"))
 
 (deftest expect-ct-happy-path-test
   (testing "sets max-age to 0 when given no options"
-    (let [handler (expect-ct (expect-handler "max-age=0"))]
-      (handler {})))
+    (test-helper {:expected "max-age=0"}))
   (testing "sets max-age to 0 when given an empty map"
-    (test-helper {} "max-age=0"))
+    (test-helper {:options {} :expected "max-age=0"}))
   (testing "sets max-age when provided as an integer"
-    (test-helper {:max-age 0} "max-age=0")
-    (test-helper {:max-age 123} "max-age=123"))
+    (test-helper {:options {:max-age 0} :expected "max-age=0"})
+    (test-helper {:options {:max-age 123} :expected "max-age=123"}))
   (testing "enforcement"
-    (test-helper {:enforce? true} "enforce; max-age=0"))
+    (test-helper {:options {:enforce? true} :expected "enforce; max-age=0"}))
   (testing "explicitly disabling enforcement"
-    (test-helper {:enforce? false} "max-age=0"))
+    (test-helper {:options {:enforce? false} :expected "max-age=0"}))
   (testing "sets report-uri"
-    (test-helper {:report-uri "https://example.com/report"}
-                 "max-age=0; report-uri=\"https://example.com/report\""))
+    (test-helper {:options {:report-uri "https://example.com/report"}
+                  :expected "max-age=0; report-uri=\"https://example.com/report\""}))
   (testing "sets enforcement, max-age, and report-uri all together"
-    (test-helper {:max-age 123
-                  :enforce? true
-                  :report-uri "https://example.com/r"}
-                 "enforce; max-age=123; report-uri=\"https://example.com/r\"")))
+    (test-helper {:options {:max-age 123
+                            :enforce? true
+                            :report-uri "https://example.com/r"}
+                  :expected "enforce; max-age=123; report-uri=\"https://example.com/r\""})))
 
 (deftest expect-ct-sad-path-test
   (testing "throws when not passed a map"
