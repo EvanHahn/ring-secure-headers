@@ -1,6 +1,8 @@
 (ns ring-secure-headers.core)
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn expect-ct
+  ([handler] (expect-ct handler {}))
+
+  ([handler options]
+    (fn [request]
+      (handler (assoc-in request [:headers "expect-ct"] "max-age=0")))))
