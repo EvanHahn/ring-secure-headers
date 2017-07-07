@@ -4,6 +4,8 @@ Help secure your Ring apps by setting various HTTP headers. It’s not a silver 
 
 ## Usage
 
+ring-secure-headers is made up of several Ring middleware. You can learn more about this on the [Ring wiki](https://github.com/ring-clojure/ring/wiki/Concepts#middleware).
+
 ### Expect-CT
 
 The `Expect-CT` HTTP header tells browsers to expect Certificate Transparency. For more about Certificate Transparency and this header, see [this blog post](https://scotthelme.co.uk/a-new-security-header-expect-ct/) and the [in-progress spec](https://datatracker.ietf.org/doc/draft-stark-expect-ct).
