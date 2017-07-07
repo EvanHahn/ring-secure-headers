@@ -8,6 +8,10 @@
        (throw (ex-info "options must be a map" {:options options})))
      (f handler options))))
 
+(defn constantly-set-header [handler header-key header-value]
+  (fn [request]
+    (assoc-in (handler request) [:headers header-key] header-value)))
+
 (defn conj-report-uri [coll options]
   (let [report-uri (:report-uri options)]
     (cond
